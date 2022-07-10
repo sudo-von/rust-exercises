@@ -1,12 +1,11 @@
 use std::io;
 
 fn main() {
-    let a = 5;
-    let b = a;
+    let mut input = String::new();
 
-    let input = String::new();
-    let mut input_2 = input;
-    io::stdin().read_line(&mut input_2);
+    println!("{}", input);
+
+    io::stdin().read_line(&mut input);
 
     let mut margs_weight: f32 = calculate_weight_on_mars(100.0);
     margs_weight = margs_weight * 1000.0;
