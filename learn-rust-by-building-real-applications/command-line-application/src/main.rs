@@ -1,12 +1,11 @@
 use std::io;
 
 fn main() {
+    println!("Enter your weight (kg)");
     let mut input = String::new();
-
-    println!("{}", input);
-
-    io::stdin().read_line(&mut input);
-
+    io::stdin().read_line(&mut input).unwrap();
+    let weight: f32 = input.trim().parse().unwrap();
+    dbg!(weight);
     let mut margs_weight: f32 = calculate_weight_on_mars(100.0);
     margs_weight = margs_weight * 1000.0;
     println!("Weight on Mars: {} kg", margs_weight);
