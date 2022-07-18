@@ -14,14 +14,27 @@ pub struct Request {
 impl TryFrom<&[u8]> for Request {
     type Error = ParseError;
     fn try_from(buf: &[u8]) -> Result<Self, Self::Error> {
-        let request = str::from_utf8(buf);
+        let request = str::from_utf8(buf)?;
+        match get_next_word(request) {
+            Some((method, request)) => {}
+            None => return Err(ParseError::InvalidRequest),
+        }
+
+        let (method, request) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
+        let (path, request) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
+        let (protocol, _) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
+
+        if protocol != "HTTP/1.1" {
+            return Err(ParseError::InvalidProtocol);
+        }
+
         unimplemented!();
     }
 }
 
 fn get_next_word(request: &str) -> Option<(&str, &str)> {
     for (i, c) in request.chars().enumerate() {
-        if c == ' ' {
+        if c == ' ' || c = '\r' {
             return Some((&request[..i], &request[i + 1..]));
         }
     }
