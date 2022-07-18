@@ -21,9 +21,9 @@ impl TryFrom<&[u8]> for Request {
             None => return Err(ParseError::InvalidRequest),
         }
 
-        let (method, request) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
-        let (path, request) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
-        let (protocol, _) = get_next_word(request).ok_or(Err(ParseError::InvalidRequest))?;
+        let (method, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
+        let (path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
+        let (protocol, _) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
 
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
