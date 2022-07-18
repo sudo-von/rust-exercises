@@ -1,3 +1,4 @@
+use super::method::MethodError;
 use super::Method;
 use std::convert::TryFrom;
 use std::error::Error;
@@ -28,13 +29,15 @@ impl TryFrom<&[u8]> for Request {
             return Err(ParseError::InvalidProtocol);
         }
 
+        let method: Method = method.parse()?;
+
         unimplemented!();
     }
 }
 
 fn get_next_word(request: &str) -> Option<(&str, &str)> {
     for (i, c) in request.chars().enumerate() {
-        if c == ' ' || c = '\r' {
+        if c == ' ' || c == '\r' {
             return Some((&request[..i], &request[i + 1..]));
         }
     }
@@ -68,6 +71,12 @@ impl Display for ParseError {
 impl Debug for ParseError {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         write!(f, "{}", self.message())
+    }
+}
+
+impl From<MethodError> for ParseError {
+    fn from(_: MethodError) -> Self {
+        Self::InvalidMethod
     }
 }
 
