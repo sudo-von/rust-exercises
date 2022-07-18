@@ -6,15 +6,15 @@ use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::str;
 use std::str::Utf8Error;
 
-pub struct Request {
-    path: &str,
-    query_string: Option<&str>,
+pub struct Request<'buff> {
+    path: &'buff str,
+    query_string: Option<&'buff str>,
     method: Method,
 }
 
-impl TryFrom<&[u8]> for Request {
+impl<'buff> TryFrom<&'buff [u8]> for Request<'buff> {
     type Error = ParseError;
-    fn try_from(buf: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(buf: &'buff [u8]) -> Result<Request<'buff>, Self::Error> {
         let request = str::from_utf8(buf)?;
         match get_next_word(request) {
             Some((method, request)) => {}
@@ -34,7 +34,7 @@ impl TryFrom<&[u8]> for Request {
         let mut query_string = None;
 
         if let Some(i) = path.find('?') {
-            query_string = Some(path[i + 1..]);
+            query_string = Some(&path[i + 1..]);
             path = &path[..i];
         }
 
